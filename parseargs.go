@@ -23,17 +23,29 @@ func RoomLinkerStrings(unlinkedRooms []Room, roomLinks [][]string) []Room {
 			if unlinkedRooms[roomIndex].Name == roomLinks[roomLinkIndex][0] {
 				unlinkedRooms[roomIndex].LinksAsStrings = append(unlinkedRooms[roomIndex].LinksAsStrings, roomLinks[roomLinkIndex][1])
 			}
+			if unlinkedRooms[roomIndex].Name == roomLinks[roomLinkIndex][1] {
+				unlinkedRooms[roomIndex].LinksAsStrings = append(unlinkedRooms[roomIndex].LinksAsStrings, roomLinks[roomLinkIndex][0])
+			}
 		}
 	}
 	return unlinkedRooms
 }
 
 func RoomLinkerPointers(unlinkedRooms []Room, roomLinks [][]string) []Room {
+	// fmt.Println("all room links are: ", roomLinks)
 	for roomLinkIndex := 0; roomLinkIndex < len(roomLinks); roomLinkIndex++ {
 		for roomIndex := 0; roomIndex < len(unlinkedRooms); roomIndex++ {
 			if unlinkedRooms[roomIndex].Name == roomLinks[roomLinkIndex][0] {
 				for roomToLinkIndex := 0; roomToLinkIndex < len(unlinkedRooms); roomToLinkIndex++ {
-					if unlinkedRooms[roomToLinkIndex].Name == roomLinks[roomToLinkIndex][1] {
+					if unlinkedRooms[roomToLinkIndex].Name == roomLinks[roomLinkIndex][1] {
+						unlinkedRooms[roomIndex].LinksAsPointers = append(unlinkedRooms[roomIndex].LinksAsPointers, &unlinkedRooms[roomToLinkIndex])
+					}
+				}
+			}
+			if unlinkedRooms[roomIndex].Name == roomLinks[roomLinkIndex][1] {
+				for roomToLinkIndex := 0; roomToLinkIndex < len(unlinkedRooms); roomToLinkIndex++ {
+					if unlinkedRooms[roomToLinkIndex].Name == roomLinks[roomLinkIndex][0] {
+						// fmt.Println("room link: ", roomLinks[roomToLinkIndex], "link start: ", unlinkedRooms[roomIndex], "link end: ", unlinkedRooms[roomToLinkIndex])
 						unlinkedRooms[roomIndex].LinksAsPointers = append(unlinkedRooms[roomIndex].LinksAsPointers, &unlinkedRooms[roomToLinkIndex])
 					}
 				}
