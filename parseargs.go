@@ -32,10 +32,12 @@ func RoomLinkerStrings(unlinkedRooms []Room, roomLinks [][]string) []Room {
 }
 
 // takes as input a slice of rooms and a slice of string that has the room links and populates the LinksAsPointers field with a pointer to the room
+// roomLinks is a slice with elements of the form [room1, room2] showing room1 is linked to room 2.
 func RoomLinkerPointers(unlinkedRooms []Room, roomLinks [][]string) []Room {
 	// fmt.Println("all room links are: ", roomLinks)
 	for linkIndex := 0; linkIndex < len(roomLinks); linkIndex++ {
 		for roomIndex := 0; roomIndex < len(unlinkedRooms); roomIndex++ {
+			// if the current room is the first element in roomLinks, add the second elemenet as a link
 			if unlinkedRooms[roomIndex].Name == roomLinks[linkIndex][0] {
 				for roomToLinkIndex := 0; roomToLinkIndex < len(unlinkedRooms); roomToLinkIndex++ {
 					if unlinkedRooms[roomToLinkIndex].Name == roomLinks[linkIndex][1] {
@@ -43,10 +45,10 @@ func RoomLinkerPointers(unlinkedRooms []Room, roomLinks [][]string) []Room {
 					}
 				}
 			}
+			// if the current room is the second element in roomLinks, add the first elemenet as a link
 			if unlinkedRooms[roomIndex].Name == roomLinks[linkIndex][1] {
 				for roomToLinkIndex := 0; roomToLinkIndex < len(unlinkedRooms); roomToLinkIndex++ {
 					if unlinkedRooms[roomToLinkIndex].Name == roomLinks[linkIndex][0] {
-						// fmt.Println("room link: ", roomLinks[roomToLinkIndex], "link start: ", unlinkedRooms[roomIndex], "link end: ", unlinkedRooms[roomToLinkIndex])
 						unlinkedRooms[roomIndex].LinksAsPointers = append(unlinkedRooms[roomIndex].LinksAsPointers, &unlinkedRooms[roomToLinkIndex])
 					}
 				}
