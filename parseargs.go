@@ -16,7 +16,7 @@ type Room struct {
 	LinksAsPointers []*Room
 }
 
-// takes as input a slice of rooms and a slice of string that has the room links and populates the links field in the rooms
+// takes as input a slice of rooms and a slice of string that has the room links and populates the LinksAsStrings field with the name of the room
 func RoomLinkerStrings(unlinkedRooms []Room, roomLinks [][]string) []Room {
 	for linkIndex := 0; linkIndex < len(roomLinks); linkIndex++ {
 		for roomIndex := 0; roomIndex < len(unlinkedRooms); roomIndex++ {
@@ -31,6 +31,7 @@ func RoomLinkerStrings(unlinkedRooms []Room, roomLinks [][]string) []Room {
 	return unlinkedRooms
 }
 
+// takes as input a slice of rooms and a slice of string that has the room links and populates the LinksAsPointers field with a pointer to the room
 func RoomLinkerPointers(unlinkedRooms []Room, roomLinks [][]string) []Room {
 	// fmt.Println("all room links are: ", roomLinks)
 	for linkIndex := 0; linkIndex < len(roomLinks); linkIndex++ {
@@ -116,6 +117,11 @@ func ParseArgs() (numberofants int, startingroom Room, endingroom Room, allrooms
 
 	allrooms = RoomLinkerPointers(allrooms, roomLinks)
 	allrooms = RoomLinkerStrings(allrooms, roomLinks)
+
+	if startingroom.Name == "" || endingroom.Name == "" {
+		fmt.Println("starting or ending room missing")
+		return 0, Room{}, Room{}, []Room{}, [][]string{}, errors.New("starting or ending room missing")
+	}
 
 	return numberofants, startingroom, endingroom, allrooms, roomLinks, nil
 }
