@@ -25,6 +25,6 @@ func main() {
 	fmt.Println("find route input info, starting room: ", startingRoom.Name, "starting room pointers :", startingRoom.LinksAsStrings, startingRoom.LinksAsPointers)
 	fmt.Println("find route input info, ending room: ", endingRoom.Name, "ending room pointers :", endingRoom.LinksAsStrings, endingRoom.LinksAsPointers)
 
-	route, routeName := lemin.FindRoute(startingRoom, endingRoom, allRooms)
-	fmt.Println("route found is: ", route, "as just names: ", routeName)
+	routeName := lemin.FindRoute(startingRoom, endingRoom, allRooms, []string{})
+	fmt.Println("route found is: ", "as just names: ", routeName)
 }
