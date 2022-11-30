@@ -120,6 +120,16 @@ func ParseArgs() (numberofants int, startingroom Room, endingroom Room, allrooms
 	allrooms = RoomLinkerPointers(allrooms, roomLinks)
 	allrooms = RoomLinkerStrings(allrooms, roomLinks)
 
+	// fixes current and ending room to fill in links
+	for _, currentRoom := range allrooms {
+		if currentRoom.Name == startingroom.Name {
+			startingroom = currentRoom
+		}
+		if currentRoom.Name == endingroom.Name {
+			endingroom = currentRoom
+		}
+	}
+
 	if startingroom.Name == "" || endingroom.Name == "" {
 		fmt.Println("starting or ending room missing")
 		return 0, Room{}, Room{}, []Room{}, [][]string{}, errors.New("starting or ending room missing")
