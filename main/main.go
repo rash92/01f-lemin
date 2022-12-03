@@ -28,4 +28,7 @@ func main() {
 	routes := [][]string{}
 	allroutes := lemin.FindAllRoutes(startingRoom, endingRoom, allRooms, &routes)
 	fmt.Println("all routes found are: ", allroutes)
+	routeswithoutduplicates := lemin.RemoveDuplicates(allroutes)
+
+	fmt.Println("all independent routes founder are: ", routeswithoutduplicates)
 }
