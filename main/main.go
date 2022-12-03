@@ -15,20 +15,16 @@ func main() {
 		fmt.Println("room ", i, "name: ", allRooms[i].Name)
 
 		for j := 0; j < len(allRooms[i].LinksAsPointers); j++ {
-			fmt.Println("room ", i, "pointer ", j, "is: ", (*allRooms[i].LinksAsPointers[j]).Name)
+			fmt.Println("room ", i, "has pointer to:", (*allRooms[i].LinksAsPointers[j]).Name)
 		}
 	}
 	fmt.Println("all rooms: ", allRooms)
 	fmt.Println("room links: ", roomLinks)
-	fmt.Println("first room: ", allRooms[0])
-	fmt.Println("first room links fields: ", allRooms[0].LinksAsStrings, allRooms[0].LinksAsPointers)
-	fmt.Println("find route input info, starting room: ", startingRoom.Name, "starting room pointers :", startingRoom.LinksAsStrings, startingRoom.LinksAsPointers)
-	fmt.Println("find route input info, ending room: ", endingRoom.Name, "ending room pointers :", endingRoom.LinksAsStrings, endingRoom.LinksAsPointers)
 
 	routes := [][]string{}
 	allroutes := lemin.FindAllRoutes(startingRoom, endingRoom, allRooms, &routes)
 	fmt.Println("all routes found are: ", allroutes)
 	routeswithoutduplicates := lemin.RemoveDuplicates(allroutes)
 
-	fmt.Println("all independent routes founder are: ", routeswithoutduplicates)
+	fmt.Println("all independent shortest routes found are: ", routeswithoutduplicates)
 }
