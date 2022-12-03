@@ -1,6 +1,9 @@
 package lemin
 
-import "fmt"
+import (
+	"fmt"
+	"reflect"
+)
 
 func IsRoomContainedInRoute(element string, slice []string) bool {
 	for _, potentialelement := range slice {
@@ -11,49 +14,53 @@ func IsRoomContainedInRoute(element string, slice []string) bool {
 	return false
 }
 
-// func IsRouteConatinedInRoutes(route []string, routes [][]string) bool {
-// 	for _, potentialroute := range routes {
-// 		if route == potentialroute {
-// 			return true
-// 		}
-// 	}
-// 	return false
-// }
+func IsRouteConatinedInRoutes(route []string, routes [][]string) bool {
+	for _, potentialroute := range routes {
+		if reflect.DeepEqual(route, potentialroute) {
+			return true
+		}
+	}
+	return false
+}
 
-// func FindAllRoutes(startingRoom Room, endingRoom Room, allRooms []Room, existingRoutes [][]string) (allRoutesNames [][]string) {
+func FindAllRoutes(startingRoom Room, endingRoom Room, allRooms []Room, existingRoutes *[][]string) (allRoutesNames [][]string) {
+	potentialRoute := FindRoute(startingRoom, endingRoom, allRooms, []string{}, existingRoutes)
+	for len(potentialRoute) != 0 {
+		if !IsRouteConatinedInRoutes(potentialRoute, *existingRoutes) {
+			*existingRoutes = append(*existingRoutes, potentialRoute)
+		}
+		potentialRoute = FindRoute(startingRoom, endingRoom, allRooms, []string{}, existingRoutes)
+	}
+	return *existingRoutes
+}
 
-// 	if !IsRouteConatinedInRoutes(FindRoute(startingRoom, endingRoom, allRooms, []string{}), existingRoutes) {
-// 		existingRoutes = append(existingRoutes, FindRoute(startingRoom, endingRoom, allRooms, []string{}))
-// 	}
-// 	return existingRoutes
-// }
-
-func FindRoute(startingRoom Room, endingRoom Room, allRooms []Room, existingRoute []string) (routeNames []string) {
+func FindRoute(startingRoom Room, endingRoom Room, allRooms []Room, existingRoute []string, existingRoutes *[][]string) (routeNames []string) {
 	fmt.Println("find route input info, starting room: ", startingRoom.Name, "starting room pointers :", startingRoom.LinksAsStrings, startingRoom.LinksAsPointers)
 	existingRoute = append(existingRoute, startingRoom.Name)
 	if startingRoom.Name == endingRoom.Name {
-
-		existingRoute = append(existingRoute, endingRoom.Name)
 		fmt.Println("discovered route at endpoint is: ", existingRoute)
 		return existingRoute
 	}
 
-	for _, currentLinkedRoom := range startingRoom.LinksAsPointers {
-		if (*currentLinkedRoom).Name == endingRoom.Name {
+	for i := 0; i < len(startingRoom.LinksAsPointers); i++ {
+		currentLinkedRoom := startingRoom.LinksAsPointers[i]
 
-			existingRoute = append(existingRoute, (*currentLinkedRoom).Name)
-			fmt.Println("discovered route is: ", routeNames)
-			return existingRoute
-		}
-		if !IsRoomContainedInRoute((*currentLinkedRoom).Name, existingRoute) && len(FindRoute(*currentLinkedRoom, endingRoom, allRooms, existingRoute)) != 0 {
-			existingRoute = FindRoute(*currentLinkedRoom, endingRoom, allRooms, existingRoute)
-			fmt.Println("discovered route is: ", existingRoute)
-			return existingRoute
+		if !IsRoomContainedInRoute((*currentLinkedRoom).Name, existingRoute) && len(FindRoute(*currentLinkedRoom, endingRoom, allRooms, existingRoute, existingRoutes)) != 0 {
+			potentialRoute := FindRoute(*currentLinkedRoom, endingRoom, allRooms, existingRoute, existingRoutes)
+			if !IsRouteConatinedInRoutes(potentialRoute, *existingRoutes) && len(potentialRoute) != 0 {
+				fmt.Println("discovered route in long conditional is: ", existingRoute)
+				*existingRoutes = append(*existingRoutes, potentialRoute)
+				existingRoute = potentialRoute
+				fmt.Println("all discovered routes after long conditional are: ", existingRoutes)
+				return existingRoute
+			}
 		}
 	}
 	if existingRoute[len(existingRoute)-1] == endingRoom.Name {
+		fmt.Println("got to checking if route ends at ending room")
 		return existingRoute
 	}
 
+	fmt.Println("got to end without meeting any other conditions")
 	return []string{}
 }
