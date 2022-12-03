@@ -108,7 +108,7 @@ func ParseArgs() (numberofants int, startingroom Room, endingroom Room, allrooms
 
 		// apart from number of ants on first line, only other time you should have only one object with no spaces is either room links or start or end tags
 		// maybe have more checks for other possibilities for incorrect formats to throw errors
-		if len(words) == 1 && line != "##start" && line != "##end" {
+		if len(words) == 1 && line != "##start" && line != "##end" && line[0] != '#' {
 			links := strings.Split(line, "-")
 			if len(links) != 2 {
 				return 0, Room{}, Room{}, []Room{}, [][]string{}, errors.New("roomlink incorrect format")
