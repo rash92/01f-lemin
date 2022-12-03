@@ -45,7 +45,7 @@ func FindRoute(startingRoom Room, endingRoom Room, allRooms []Room, existingRout
 			fmt.Println("discovered route is: ", routeNames)
 			return existingRoute
 		}
-		if !IsRoomContainedInRoute((*currentLinkedRoom).Name, existingRoute) {
+		if !IsRoomContainedInRoute((*currentLinkedRoom).Name, existingRoute) && len(FindRoute(*currentLinkedRoom, endingRoom, allRooms, existingRoute)) != 0 {
 			existingRoute = FindRoute(*currentLinkedRoom, endingRoom, allRooms, existingRoute)
 			fmt.Println("discovered route is: ", existingRoute)
 			return existingRoute
@@ -55,5 +55,5 @@ func FindRoute(startingRoom Room, endingRoom Room, allRooms []Room, existingRout
 		return existingRoute
 	}
 
-	return existingRoute
+	return []string{}
 }
