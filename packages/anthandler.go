@@ -3,33 +3,61 @@ package lemin
 import "fmt"
 
 func AssignAnts(routes [][]Room, numberofants int) (antsPerRoute []int) {
+	if len(routes) == 1 {
+		return []int{numberofants}
+	}
+	if len(routes) == 0 {
+		return antsPerRoute
+	}
+
 	for routeIndex := 0; routeIndex < len(routes); routeIndex++ {
 		antsPerRoute = append(antsPerRoute, 0)
 	}
 
-	for antNumber := 0; antNumber < numberofants; antNumber++ {
-		for routeIndex := 1; routeIndex < len(routes); routeIndex++ {
-			currentRoute := routes[routeIndex]
-			antsPlusPath := antsPerRoute[routeIndex-1] + len(routes[routeIndex-1])
-			antsPlusPathCurrent := antsPerRoute[routeIndex] + len(currentRoute)
-			if antsPlusPathCurrent <= antsPlusPath {
-				antsPerRoute[routeIndex]++
-				antsPlusPath = antsPlusPathCurrent
-				break
-			} else {
-				antsPerRoute[routeIndex-1]++
-				antsPlusPath++
+	antNumber := 0
 
+	for currentRouteIndex := 1; currentRouteIndex < len(routes); {
+		for previousRouteIndex := 0; previousRouteIndex < currentRouteIndex; previousRouteIndex++ {
+
+			antsPlusPathPrevious := antsPerRoute[previousRouteIndex] + len(routes[previousRouteIndex])
+			antsPlusPathCurrent := antsPerRoute[currentRouteIndex] + len(routes[currentRouteIndex])
+
+			if antsPlusPathPrevious <= antsPlusPathCurrent {
+
+				antsPerRoute[previousRouteIndex]++
+				previousRouteIndex = 0
+				antNumber++
+				fmt.Println("after ant number", antNumber, "index ", currentRouteIndex, "has ants plus length: ", antsPlusPathCurrent, "index ", previousRouteIndex, "has ants plus length: ", antsPlusPathPrevious)
+				fmt.Println("after ant number", antNumber, "assigned ants are: ", antsPerRoute)
+				// break
+			}
+			if antsPlusPathPrevious > antsPlusPathCurrent {
+				antsPerRoute[currentRouteIndex]++
+				currentRouteIndex++
+				antNumber++
+				fmt.Println("after ant number", antNumber, "index ", currentRouteIndex, "has ants plus length: ", antsPlusPathCurrent, "index ", previousRouteIndex, "has ants plus length: ", antsPlusPathPrevious)
+
+				fmt.Println("after ant number", antNumber, "assigned ants are: ", antsPerRoute)
+				if currentRouteIndex == len(routes) {
+					currentRouteIndex = 1
+				}
+				if antNumber == numberofants {
+					return antsPerRoute
+				}
+
+				break
+			}
+			fmt.Println("after ant number", antNumber, "assigned ants are: ", antsPerRoute)
+			if antNumber == numberofants {
+				return antsPerRoute
 			}
 
 		}
-		// fmt.Println("after ant number", antNumber, "assigned ants are: ", antsPerRoute)
 	}
+
 	fmt.Println("assigned ants are: ", antsPerRoute)
-	if len(routes) > 1 {
-		return antsPerRoute
-	}
-	return []int{numberofants}
+
+	return antsPerRoute
 }
 
 func AntHandler(routes [][]Room, numberofants int) {
@@ -38,7 +66,7 @@ func AntHandler(routes [][]Room, numberofants int) {
 	for routeIndex := 0; routeIndex < len(routes); routeIndex++ {
 		currentRoute := routes[routeIndex]
 		for roomIndex := 1; roomIndex < len(currentRoute); roomIndex++ {
-			for antNumber := 0; antNumber <= numberofants; antNumber++ {
+			for antNumber := 0; antNumber < numberofants; antNumber++ {
 				if antNumber%len(routes) == routeIndex {
 					fmt.Print("L", antNumber, "-", currentRoute[roomIndex].Name, " ")
 				}

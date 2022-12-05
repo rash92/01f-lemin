@@ -27,6 +27,8 @@ func main() {
 			fmt.Println("room ", j, " in route: ", room.Name)
 		}
 	}
+
+	fmt.Println("number of paths is: ", len(allroutes), "number of ants is: ", numberofants)
 	fmt.Println("ant paths: ", lemin.AssignAnts(allroutes, numberofants))
-	lemin.AntHandler(allroutes, numberofants)
+	// lemin.AntHandler(allroutes, numberofants)
 }
