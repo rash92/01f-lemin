@@ -54,8 +54,9 @@ func AntHandler(routes [][]lemin.Room, numberofants int) {
 
 	for numberofants > 0 {
 		fmt.Println("Number of ants", numberofants)
-		for i := 0; i < len(roomsInPaths)-1; i++ {
-			if (roomsInPaths[i] + antsOnPath[i]) < (roomsInPaths[i+1] + antsOnPath[i+1]) {
+
+		for i := 1; i < len(roomsInPaths); i++ {
+			if (roomsInPaths[i] + antsOnPath[i]) > (roomsInPaths[i+1] + antsOnPath[i+1]) {
 				antsOnPath[i]++
 			} else {
 				antsOnPath[i+1]++
