@@ -1,7 +1,6 @@
 package lemin
 
 import (
-	"fmt"
 	"reflect"
 )
 
@@ -48,7 +47,6 @@ func RemoveDuplicates(existingRoutes [][]Room) [][]Room {
 				room := route1[roomIndex]
 				if IsRoomContainedInRoute(room, route2) && route2Index != route1Index && len(route1) <= len(route2) {
 					existingRoutes = append(existingRoutes[:route2Index], existingRoutes[route2Index+1:]...)
-					fmt.Println("existing routes at this point are: ", existingRoutes)
 					route2Index--
 					if route2Index < route1Index {
 						route1Index--
