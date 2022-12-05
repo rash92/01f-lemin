@@ -27,4 +27,7 @@ func main() {
 	routeswithoutduplicates := lemin.RemoveDuplicates(allroutes)
 
 	fmt.Println("all independent shortest routes found are: ", routeswithoutduplicates)
+
+	// sortedRoutes := lemin.RouteSorter(routeswithoutduplicates)
+	// fmt.Println("sorted routes are: ", sortedRoutes)
 }
