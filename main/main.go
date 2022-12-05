@@ -27,4 +27,6 @@ func main() {
 			fmt.Println("room ", j, " in route: ", room.Name)
 		}
 	}
+	fmt.Println("ant paths: ")
+	lemin.AntHandler(allroutes, numberofants)
 }
