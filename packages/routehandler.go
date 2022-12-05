@@ -5,6 +5,11 @@ import (
 	"reflect"
 )
 
+type Route struct {
+	RoomList []Room
+	Length   int
+}
+
 func IsRoomContainedInRoute(element string, slice []string) bool {
 	for _, potentialelement := range slice {
 		if element == potentialelement {
@@ -23,6 +28,22 @@ func IsRouteConatinedInRoutes(route []string, routes [][]string) bool {
 	return false
 }
 
+// takes in a list of routes and returns the same list sorted by length from shortest to longest
+func RouteSorter(routes [][]string) (routesSortedByLength [][]string) {
+	noOfRoutes := len(routes)
+	for length := 0; len(routesSortedByLength) < noOfRoutes; length++ {
+		for routeIndex := 0; routeIndex < len(routes); routeIndex++ {
+			currentRoute := routes[routeIndex]
+			lengthOfRoute := len(currentRoute)
+			if lengthOfRoute == length {
+				routesSortedByLength = append(routesSortedByLength, currentRoute)
+			}
+		}
+	}
+	return routesSortedByLength
+}
+
+// takes a list of routes and returns a list of routes with routes that go through the same middle rooms removed, preferring to keep the shortest route
 func RemoveDuplicates(existingRoutes [][]string) [][]string {
 	for route1Index := 0; route1Index < len(existingRoutes); route1Index++ {
 		route1 := existingRoutes[route1Index]
@@ -45,17 +66,7 @@ func RemoveDuplicates(existingRoutes [][]string) [][]string {
 	return existingRoutes
 }
 
-func FindAllRoutes(startingRoom Room, endingRoom Room, allRooms []Room, existingRoutes *[][]string) (allRoutesNames [][]string) {
-	potentialRoute := FindRoute(startingRoom, endingRoom, allRooms, []string{}, existingRoutes)
-	for len(potentialRoute) != 0 {
-		if !IsRouteConatinedInRoutes(potentialRoute, *existingRoutes) {
-			*existingRoutes = append(*existingRoutes, potentialRoute)
-		}
-		potentialRoute = FindRoute(startingRoom, endingRoom, allRooms, []string{}, existingRoutes)
-	}
-	return *existingRoutes
-}
-
+// finds a route that hasn't already been found and put in existingRoutes if possible, or returns an empty route
 func FindRoute(startingRoom Room, endingRoom Room, allRooms []Room, existingRoute []string, existingRoutes *[][]string) (routeNames []string) {
 	existingRoute = append(existingRoute, startingRoom.Name)
 	if startingRoom.Name == endingRoom.Name {
@@ -82,4 +93,16 @@ func FindRoute(startingRoom Room, endingRoom Room, allRooms []Room, existingRout
 	}
 
 	return []string{}
+}
+
+// finds all possible valid routes, and sorts them from shortest to longest
+func FindAllRoutes(startingRoom Room, endingRoom Room, allRooms []Room, existingRoutes [][]string) (allRoutesNames [][]string) {
+	potentialRoute := FindRoute(startingRoom, endingRoom, allRooms, []string{}, &existingRoutes)
+	for len(potentialRoute) != 0 {
+		if !IsRouteConatinedInRoutes(potentialRoute, existingRoutes) {
+			existingRoutes = append(existingRoutes, potentialRoute)
+		}
+		potentialRoute = FindRoute(startingRoom, endingRoom, allRooms, []string{}, &existingRoutes)
+	}
+	return RouteSorter(RemoveDuplicates(existingRoutes))
 }

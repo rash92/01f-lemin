@@ -3,10 +3,14 @@ package main
 import (
 	"fmt"
 	lemin "lemin/packages"
+	"log"
 )
 
 func main() {
 	numberofants, startingRoom, endingRoom, allRooms, roomLinks, outputError := lemin.ParseArgs()
+	if outputError != nil {
+		log.Fatal("couldn't parse file")
+	}
 
 	fmt.Println("detected error: ", outputError)
 	fmt.Println("number of ants: ", numberofants)
@@ -22,12 +26,8 @@ func main() {
 	fmt.Println("room links: ", roomLinks)
 
 	routes := [][]string{}
-	allroutes := lemin.FindAllRoutes(startingRoom, endingRoom, allRooms, &routes)
+	allroutes := lemin.FindAllRoutes(startingRoom, endingRoom, allRooms, routes)
 	fmt.Println("all routes found are: ", allroutes)
-	routeswithoutduplicates := lemin.RemoveDuplicates(allroutes)
 
-	fmt.Println("all independent shortest routes found are: ", routeswithoutduplicates)
-
-	// sortedRoutes := lemin.RouteSorter(routeswithoutduplicates)
-	// fmt.Println("sorted routes are: ", sortedRoutes)
+	fmt.Println("sorted routes are: ", allroutes)
 }
