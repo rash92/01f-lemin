@@ -25,7 +25,7 @@ func main() {
 	fmt.Println("all rooms: ", allRooms)
 	fmt.Println("room links: ", roomLinks)
 
-	routes := [][]string{}
+	routes := [][]lemin.Room{}
 	allroutes := lemin.FindAllRoutes(startingRoom, endingRoom, allRooms, routes)
 	fmt.Println("all routes found are: ", allroutes)
 
