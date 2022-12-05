@@ -31,7 +31,7 @@ func AssignAnts(routes [][]Room, numberofants int) (antsPerRoute []int) {
 				fmt.Println("after ant number", antNumber, "assigned ants are: ", antsPerRoute)
 				// break
 			}
-			if antsPlusPathPrevious > antsPlusPathCurrent {
+			if antsPlusPathPrevious > antsPlusPathCurrent && previousRouteIndex == currentRouteIndex-1 {
 				antsPerRoute[currentRouteIndex]++
 				currentRouteIndex++
 				antNumber++
