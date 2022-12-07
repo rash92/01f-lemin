@@ -31,4 +31,6 @@ func main() {
 	fmt.Println("number of paths is: ", len(allroutes), "number of ants is: ", numberofants)
 	fmt.Println("ant paths: ", lemin.AssignAnts(allroutes, numberofants))
 	// lemin.AntHandler(allroutes, numberofants)
+	lemin.IdentifyAnts(numberofants, lemin.AssignAnts(allroutes, numberofants), allroutes)
+	lemin.PrintAnts(lemin.IdentifyAnts(numberofants, lemin.AssignAnts(allroutes, numberofants), allroutes), allroutes, numberofants)
 }
