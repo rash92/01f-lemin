@@ -87,8 +87,6 @@ func FindRoute(startingRoom Room, endingRoom Room, allRooms []Room, existingRout
 			potentialRoute := FindRoute(*currentLinkedRoom, endingRoom, allRooms, existingRoute, existingRoutes)
 			if !IsRouteConatinedInRoutes(potentialRoute, *existingRoutes) && len(potentialRoute) != 0 {
 
-				if len(*existingRoutes) == 2 {
-				}
 				*existingRoutes = append(*existingRoutes, potentialRoute)
 				existingRoute = potentialRoute
 				if existingRoute[len(existingRoute)-1].Name != endingRoom.Name {
