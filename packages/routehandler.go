@@ -37,6 +37,15 @@ func RouteSorter(routes [][]Room) (routesSortedByLength [][]Room) {
 	return routesSortedByLength
 }
 
+func RemoveIncomplete(existingRoutes [][]Room, endingRoom Room) (outputRoutes [][]Room) {
+	for _, route := range existingRoutes {
+		if route[len(route)-1].Name == endingRoom.Name {
+			outputRoutes = append(outputRoutes, route)
+		}
+	}
+	return outputRoutes
+}
+
 // takes a list of routes and returns a list of routes with routes that go through the same middle rooms removed, preferring to keep the shortest route
 func RemoveDuplicates(existingRoutes [][]Room) [][]Room {
 	for route1Index := 0; route1Index < len(existingRoutes); route1Index++ {
@@ -62,7 +71,12 @@ func RemoveDuplicates(existingRoutes [][]Room) [][]Room {
 // finds a route that hasn't already been found and put in existingRoutes if possible, or returns an empty route
 func FindRoute(startingRoom Room, endingRoom Room, allRooms []Room, existingRoute []Room, existingRoutes *[][]Room) (routeNames []Room) {
 	existingRoute = append(existingRoute, startingRoom)
+
 	if startingRoom.Name == endingRoom.Name {
+		// fmt.Println("new route ending is: ", existingRoute[len(existingRoute)-1].Name)
+		if existingRoute[len(existingRoute)-1].Name != endingRoom.Name {
+			return []Room{}
+		}
 		return existingRoute
 	}
 
@@ -75,14 +89,17 @@ func FindRoute(startingRoom Room, endingRoom Room, allRooms []Room, existingRout
 
 				*existingRoutes = append(*existingRoutes, potentialRoute)
 				existingRoute = potentialRoute
+				if existingRoute[len(existingRoute)-1].Name != endingRoom.Name {
+					return []Room{}
+				}
 
 				return existingRoute
 			}
 		}
 	}
 
-	if existingRoute[len(existingRoute)-1].Name == endingRoom.Name {
-		return existingRoute
+	if existingRoute[len(existingRoute)-1].Name != endingRoom.Name {
+		return []Room{}
 	}
 
 	return []Room{}
@@ -90,12 +107,7 @@ func FindRoute(startingRoom Room, endingRoom Room, allRooms []Room, existingRout
 
 // finds all possible valid routes, and sorts them from shortest to longest
 func FindAllRoutes(startingRoom Room, endingRoom Room, allRooms []Room, existingRoutes [][]Room) (allRoutesNames [][]Room) {
-	potentialRoute := FindRoute(startingRoom, endingRoom, allRooms, []Room{}, &existingRoutes)
-	for len(potentialRoute) != 0 {
-		if !IsRouteConatinedInRoutes(potentialRoute, existingRoutes) {
-			existingRoutes = append(existingRoutes, potentialRoute)
-		}
-		potentialRoute = FindRoute(startingRoom, endingRoom, allRooms, []Room{}, &existingRoutes)
-	}
-	return RouteSorter(RemoveDuplicates(existingRoutes))
+	FindRoute(startingRoom, endingRoom, allRooms, []Room{}, &existingRoutes)
+
+	return RouteSorter(RemoveDuplicates(RemoveIncomplete(existingRoutes, endingRoom)))
 }
