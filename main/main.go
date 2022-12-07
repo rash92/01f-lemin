@@ -31,17 +31,16 @@ func main() {
 	// 	}
 	// }
 
-	AntHandler(allroutes, numberofants)
+	getAnts := AntHandler(allroutes, numberofants)
+
+	fmt.Println(getAnts)
 }
 
-func AntHandler(routes [][]lemin.Room, numberofants int) {
+func AntHandler(routes [][]lemin.Room, numberofants int) []int {
 	// get number of rooms in a route
 	lengthOfRoute := len(routes)
-	fmt.Println("possible routes", lengthOfRoute)
-	fmt.Println("number of ants", numberofants)
 
 	antsOnPath := make([]int, lengthOfRoute)
-	fmt.Println("ants on paths PREVIOUS", antsOnPath)
 
 	roomsInPaths := []int{}
 
@@ -50,21 +49,29 @@ func AntHandler(routes [][]lemin.Room, numberofants int) {
 		roomsInPaths = append(roomsInPaths, numberOfRoomsInRoute)
 	}
 
-	fmt.Println("rooms in paths", roomsInPaths)
-
 	for numberofants > 0 {
-		fmt.Println("Number of ants", numberofants)
 
-		for i := 1; i < len(roomsInPaths); i++ {
-			if (roomsInPaths[i] + antsOnPath[i]) > (roomsInPaths[i+1] + antsOnPath[i+1]) {
-				antsOnPath[i]++
-			} else {
-				antsOnPath[i+1]++
+		if len(roomsInPaths) == 1 {
+			antsOnPath[0] = numberofants
+			numberofants = 0
+		} else {
+			for i := len(roomsInPaths) - 1; i > 0; i-- {
+				for j := i - 1; j >= 0; j-- {
+					if numberofants == 0 {
+						break
+					}
+					prev := roomsInPaths[i] + antsOnPath[i]
+					next := roomsInPaths[j] + antsOnPath[j]
+					if prev > next {
+						antsOnPath[j]++
+					} else {
+						antsOnPath[i]++
+					}
+					numberofants--
+				}
 			}
 		}
-		numberofants--
 	}
 
-	fmt.Println("ants on paths AFTER", antsOnPath)
-
+	return antsOnPath
 }
