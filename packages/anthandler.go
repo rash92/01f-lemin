@@ -121,25 +121,68 @@ func FindMaxTimeSteps(antsPerRoute [][]Ant, allRoutes [][]Room) int {
 }
 
 func MoveAnts(antsPerRoute [][]Ant) [][]Ant {
-	for _, route := range antsPerRoute {
-		for antIndex := len(route) - 1; antIndex > 0; antIndex-- {
-			currentAnt := route[antIndex]
-			previousAnt := route[antIndex-1]
+	newAntsPerRoute := make([][]Ant, len(antsPerRoute))
+	copy(newAntsPerRoute, antsPerRoute)
+	// fmt.Println("first ant per route before are: ", newAntsPerRoute[0][0].CurrentRoom.Name)
+	for routeIndex, route := range antsPerRoute {
+		for antIndex := len(route) - 1; antIndex >= 0; antIndex-- {
 
-			// if currently waiting and previous ant not waiting i.e. is in a room, go to first room
-			if currentAnt.CurrentRoom.Name == "" && previousAnt.CurrentRoom.Name != "" {
-				currentAnt.CurrentRoomIndex = 0
-				currentAnt.CurrentRoom = currentAnt.Route[currentAnt.CurrentRoomIndex]
+			currentAnt := route[antIndex]
+			// fmt.Println("current ant location is: ", currentAnt.CurrentRoom.Name, "for ant", currentAnt.ID)
+			if antIndex > 0 {
+				previousAnt := route[antIndex-1]
+
+				// if currently waiting and previous ant not waiting i.e. is in a room, go to first room
+				if currentAnt.CurrentRoom.Name == "" && previousAnt.CurrentRoom.Name != "" {
+					currentAnt.CurrentRoomIndex = 0
+					currentAnt.CurrentRoom = currentAnt.Route[currentAnt.CurrentRoomIndex]
+				}
 			}
 			// if not currently waiting i.e. already in a room, go to the next room in the route
 			if currentAnt.CurrentRoom.Name != "" {
-				currentAnt.CurrentRoomIndex++
+				if currentAnt.CurrentRoomIndex == len(currentAnt.Route)-1 {
+					currentAnt.CurrentRoom.Name = ""
+					break
+				}
+				currentAnt.CurrentRoomIndex = currentAnt.CurrentRoomIndex + 1
+
 				currentAnt.CurrentRoom = currentAnt.Route[currentAnt.CurrentRoomIndex]
+				// fmt.Println("current room index is: ", currentAnt.CurrentRoomIndex, "current room name is: ", currentAnt.CurrentRoom.Name)
+				// fmt.Println("current ant after is: ", currentAnt)
 			}
+			// fmt.Println("current ant is: ", currentAnt.ID)
+			// fmt.Println("current ant location after is: ", currentAnt.CurrentRoom.Name, "for ant", currentAnt.ID)
+			newAntsPerRoute[routeIndex][antIndex] = currentAnt
 		}
 	}
-	return antsPerRoute
+	// fmt.Println("first ant per route after are: ", newAntsPerRoute[0][0].CurrentRoom.Name)
+	return newAntsPerRoute
 }
 
-func PrintAnts(antsPerRoute [][]Ant, allRoutes [][]Room) {
+func PrintAnts(antsPerRoute [][]Ant, allRoutes [][]Room, numberOfAnts int) {
+	// initial assign first ant in each route to first room
+	fmt.Println("final printing is: ")
+	for _, route := range antsPerRoute {
+		route[0].CurrentRoom = route[0].Route[0]
+		fmt.Print(" L", route[0].ID, "-", route[0].CurrentRoom.Name)
+	}
+	fmt.Println()
+
+	timeSteps := FindMaxTimeSteps(antsPerRoute, allRoutes)
+
+	for timeStep := 0; timeStep < timeSteps; timeStep++ {
+
+		antsPerRoute = MoveAnts(antsPerRoute)
+
+		for id := 1; id <= numberOfAnts; id++ {
+			for _, route := range antsPerRoute {
+				for _, ant := range route {
+					if ant.ID == id && ant.CurrentRoom.Name != "" {
+						fmt.Print(" L", ant.ID, "-", ant.CurrentRoom.Name)
+					}
+				}
+			}
+		}
+		fmt.Println()
+	}
 }

@@ -32,7 +32,9 @@ func main() {
 	fmt.Println("ant paths: ", lemin.AssignNumberOfAnts(allroutes, numberofants))
 	// lemin.AntHandler(allroutes, numberofants)
 	antSlice := lemin.IdentifyAnts(numberofants, lemin.AssignNumberOfAnts(allroutes, numberofants), allroutes)
-	fmt.Println("antSlice is: ", antSlice)
-	fmt.Println(lemin.AssignAntsPerRoute(antSlice, allroutes))
+	// fmt.Println("antSlice is: ", antSlice)
+	antsPerRoute := lemin.AssignAntsPerRoute(antSlice, allroutes)
+
+	lemin.PrintAnts(antsPerRoute, allroutes, numberofants)
 	// lemin.PrintAnts(lemin.IdentifyAnts(numberofants, lemin.AssignAnts(allroutes, numberofants), allroutes), allroutes, numberofants)
 }
