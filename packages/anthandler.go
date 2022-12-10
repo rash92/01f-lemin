@@ -9,6 +9,7 @@ type Ant struct {
 	RouteIndex       int
 	CurrentRoom      Room
 	CurrentRoomIndex int
+	Finished         bool
 	Route            []Room
 }
 
@@ -141,7 +142,7 @@ func MoveAnts(antsPerRoute [][]Ant) [][]Ant {
 			// if not currently waiting i.e. already in a room, go to the next room in the route
 			if currentAnt.CurrentRoom.Name != "" {
 				if currentAnt.CurrentRoomIndex == len(currentAnt.Route)-1 {
-					currentAnt.CurrentRoom.Name = ""
+					newAntsPerRoute[routeIndex][antIndex].Finished = true
 					break
 				}
 				currentAnt.CurrentRoomIndex = currentAnt.CurrentRoomIndex + 1
@@ -173,11 +174,12 @@ func PrintAnts(antsPerRoute [][]Ant, allRoutes [][]Room, numberOfAnts int) {
 	for timeStep := 0; timeStep < timeSteps; timeStep++ {
 
 		antsPerRoute = MoveAnts(antsPerRoute)
+		fmt.Println("first ant finished status is: ", antsPerRoute[1][0].Finished)
 
 		for id := 1; id <= numberOfAnts; id++ {
 			for _, route := range antsPerRoute {
 				for _, ant := range route {
-					if ant.ID == id && ant.CurrentRoom.Name != "" {
+					if ant.ID == id && ant.CurrentRoom.Name != "" && !ant.Finished {
 						fmt.Print(" L", ant.ID, "-", ant.CurrentRoom.Name)
 					}
 				}
@@ -185,4 +187,5 @@ func PrintAnts(antsPerRoute [][]Ant, allRoutes [][]Room, numberOfAnts int) {
 		}
 		fmt.Println()
 	}
+	// fmt.Println("after all printing the ants say: ", antsPerRoute)
 }
