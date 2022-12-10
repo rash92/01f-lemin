@@ -2,7 +2,6 @@ package lemin
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -58,28 +57,30 @@ func RoomLinkerPointers(unlinkedRooms []Room, roomLinks [][]string) []Room {
 	return unlinkedRooms
 }
 
-func ParseArgs() (numberofants int, startingroom Room, endingroom Room, allrooms []Room, outputError error) {
+func ParseArgs() (numberofants int, startingroom Room, endingroom Room, allrooms []Room, instruction string, outputError error) {
 	roomLinks := [][]string{}
 	filename := os.Args[1]
 
 	data, outputError := os.ReadFile(filename)
 	if outputError != nil {
-		return 0, Room{}, Room{}, []Room{}, outputError
+		return 0, Room{}, Room{}, []Room{}, instruction, outputError
 	}
 
 	instructions := strings.Split(string(data), "\n")
+	instruction = ""
 
 	// first line should always be number of ants
 	numberofants, outputError = strconv.Atoi(instructions[0])
 	if outputError != nil {
-		return 0, Room{}, Room{}, []Room{}, outputError
+		return 0, Room{}, Room{}, []Room{}, instruction, outputError
 	}
 
 	for i := 1; i < len(instructions); i++ {
 		line := instructions[i]
+		instruction += line + "\n"
 
 		// prints current line as whole file should be printed in output as per instructions
-		fmt.Println(line)
+		// fmt.Println(line)
 
 		// splits line based on spaces to differentiate number of ants, room info, room links etc.
 		words := strings.Fields(line)
@@ -88,13 +89,21 @@ func ParseArgs() (numberofants int, startingroom Room, endingroom Room, allrooms
 		if len(words) == 3 {
 			currentRoom := Room{}
 			currentRoom.Name = words[0]
-			currentRoom.Xcoord, outputError = strconv.Atoi(words[1])
-			if outputError != nil {
-				return 0, Room{}, Room{}, []Room{}, outputError
+
+			if string(words[0][0]) == "L" {
+				return 0, Room{}, Room{}, []Room{}, instruction, errors.New("ERROR: invalid data format, invalid room name ")
 			}
-			currentRoom.Ycoord, outputError = strconv.Atoi(words[2])
+
+			currentRoom.Xcoord, outputError = strconv.Atoi(words[1])
+
 			if outputError != nil {
-				return 0, Room{}, Room{}, []Room{}, outputError
+				return 0, Room{}, Room{}, []Room{}, instruction, outputError
+			}
+
+			currentRoom.Ycoord, outputError = strconv.Atoi(words[2])
+
+			if outputError != nil {
+				return 0, Room{}, Room{}, []Room{}, instruction, outputError
 			}
 
 			allrooms = append(allrooms, currentRoom)
@@ -112,7 +121,7 @@ func ParseArgs() (numberofants int, startingroom Room, endingroom Room, allrooms
 		if len(words) == 1 && line != "##start" && line != "##end" && line[0] != '#' {
 			links := strings.Split(line, "-")
 			if len(links) != 2 {
-				return 0, Room{}, Room{}, []Room{}, errors.New("roomlink incorrect format")
+				return 0, Room{}, Room{}, []Room{}, instruction, errors.New("roomlink incorrect format")
 			}
 			roomLinks = append(roomLinks, links)
 		}
@@ -133,8 +142,8 @@ func ParseArgs() (numberofants int, startingroom Room, endingroom Room, allrooms
 
 	if startingroom.Name == "" || endingroom.Name == "" {
 		// fmt.Println("starting or ending room missing")
-		return 0, Room{}, Room{}, []Room{}, errors.New("starting or ending room missing")
+		return 0, Room{}, Room{}, []Room{}, instruction, errors.New("starting or ending room missing")
 	}
 
-	return numberofants, startingroom, endingroom, allrooms, nil
+	return numberofants, startingroom, endingroom, allrooms, instruction, nil
 }
