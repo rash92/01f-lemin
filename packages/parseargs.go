@@ -12,6 +12,7 @@ type Room struct {
 	Name            string
 	Xcoord          int
 	Ycoord          int
+	CurrentAnt      Ant
 	LinksAsStrings  []string
 	LinksAsPointers []*Room
 }
@@ -78,7 +79,7 @@ func ParseArgs() (numberofants int, startingroom Room, endingroom Room, allrooms
 		line := instructions[i]
 
 		// prints current line as whole file should be printed in output as per instructions
-		fmt.Println(line)
+		// fmt.Println(line)
 
 		// splits line based on spaces to differentiate number of ants, room info, room links etc.
 		words := strings.Fields(line)

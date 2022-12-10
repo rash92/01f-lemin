@@ -16,7 +16,7 @@ func main() {
 	}
 
 	// fmt.Println("detected error: ", outputError)
-	// fmt.Println("number of ants: ", numberofants)
+	fmt.Println("number of ants: ", numberofants)
 	// fmt.Println("starting room: ", startingRoom, "ending room: ", endingRoom)
 	// fmt.Println("all rooms: ", allRooms)
 	// fmt.Println("room links: ", roomLinks)
@@ -24,54 +24,71 @@ func main() {
 	// routes := [][]lemin.Room{}
 	allroutes := lemin.FindAllRoutes(startingRoom, endingRoom, allRooms, [][]lemin.Room{})
 
-	// for i, route := range allroutes {
-	// 	fmt.Println("route number: ", i+1)
-	// 	for j, room := range route {
-	// 		fmt.Println("room ", j, " in route: ", room.Name)
+	for _, route := range allroutes {
+		for j, room := range route {
+			fmt.Println("room ", j, " in route: ", room.Name)
+		}
+	}
+	// getAntsOnRoute := AntHandler(allroutes, numberofants)
+	// fmt.Println(getAntsOnRoute)
+	// fmt.Println(allroutes)
+
+	// i := 1
+
+	// for i < numberofants+1 {
+	// 	for _, roomlinks := range allroutes {
+	// 		// fmt.Println("route:", route)
+	// 		for links := range roomlinks {
+	// 			fmt.Print("L", i, "-", links)
+	// 		}
+	// 		fmt.Println()
 	// 	}
+	// 	i++
 	// }
 
-	getAnts := AntHandler(allroutes, numberofants)
+	antsRoute := RoutesAntsWillTake(allroutes, numberofants)
+	// fmt.Println("ants route:", antsRoute)
 
-	fmt.Println(getAnts)
+	// roomsInRoute := []int{}
+	// lengthOfRoutes := len(allroutes)
+
+	fmt.Println(allRooms)
+
 }
 
-func AntHandler(routes [][]lemin.Room, numberofants int) []int {
-	// get number of rooms in a route
-	lengthOfRoute := len(routes)
+func RoutesAntsWillTake(routes [][]lemin.Room, numberofants int) []int {
 
-	antsOnPath := make([]int, lengthOfRoute)
+	// make a slice with the length of the number of routes
+	lengthOfRoutes := len(routes)
+	antsOnRoute := make([]int, lengthOfRoutes)
 
-	roomsInPaths := []int{}
+	roomsInRoute := []int{}
 
-	for i := lengthOfRoute; i > 0; i-- {
+	for i := lengthOfRoutes; i > 0; i-- {
 		numberOfRoomsInRoute := len(routes[i-1])
-		roomsInPaths = append(roomsInPaths, numberOfRoomsInRoute)
+		roomsInRoute = append(roomsInRoute, numberOfRoomsInRoute)
 	}
 
 	for numberofants > 0 {
-
-		if len(roomsInPaths) == 1 {
-			antsOnPath[0] = numberofants
-			numberofants = 0
-		} else {
-			for i := len(roomsInPaths) - 1; i > 0; i-- {
-				for j := i - 1; j >= 0; j-- {
-					if numberofants == 0 {
-						break
-					}
-					prev := roomsInPaths[i] + antsOnPath[i]
-					next := roomsInPaths[j] + antsOnPath[j]
-					if prev > next {
-						antsOnPath[j]++
-					} else {
-						antsOnPath[i]++
-					}
-					numberofants--
+		if len(roomsInRoute) == 1 {
+			antsOnRoute[0]++
+			numberofants--
+		}
+		for i := len(roomsInRoute) - 1; i > 0; i-- {
+			for j := i - 1; j >= 0; j-- {
+				if numberofants == 0 {
+					break
 				}
+				prev := roomsInRoute[i] + antsOnRoute[i]
+				next := roomsInRoute[j] + antsOnRoute[j]
+				if prev > next {
+					antsOnRoute[j]++
+				} else {
+					antsOnRoute[i]++
+				}
+				numberofants--
 			}
 		}
 	}
-
-	return antsOnPath
+	return antsOnRoute
 }
