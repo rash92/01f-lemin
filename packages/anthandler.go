@@ -96,7 +96,7 @@ func AssignNumberOfAnts(routes [][]Room, numberofants int) (antsPerRoute []int) 
 		}
 	}
 
-	fmt.Println("assigned ants are: ", antsPerRoute)
+	// fmt.Println("assigned ants are: ", antsPerRoute)
 
 	return antsPerRoute
 }
@@ -162,25 +162,27 @@ func MoveAnts(antsPerRoute [][]Ant) [][]Ant {
 
 func PrintAnts(antsPerRoute [][]Ant, allRoutes [][]Room, numberOfAnts int) {
 	// initial assign first ant in each route to first room
-	fmt.Println("final printing is: ")
+	// fmt.Println("final printing is: ")
 	for _, route := range antsPerRoute {
-		route[0].CurrentRoom = route[0].Route[0]
-		fmt.Print(" L", route[0].ID, "-", route[0].CurrentRoom.Name)
+		route[0].CurrentRoom = route[0].Route[1]
+		route[0].CurrentRoomIndex = 1
+		fmt.Print("L", route[0].ID, "-", route[0].CurrentRoom.Name, " ")
 	}
 	fmt.Println()
 
-	timeSteps := FindMaxTimeSteps(antsPerRoute, allRoutes)
+	// combination of various off by one errors hence -3
+	timeSteps := FindMaxTimeSteps(antsPerRoute, allRoutes) - 3
 
 	for timeStep := 0; timeStep < timeSteps; timeStep++ {
 
 		antsPerRoute = MoveAnts(antsPerRoute)
-		fmt.Println("first ant finished status is: ", antsPerRoute[1][0].Finished)
+		// fmt.Println("first ant finished status is: ", antsPerRoute[1][0].Finished)
 
 		for id := 1; id <= numberOfAnts; id++ {
 			for _, route := range antsPerRoute {
 				for _, ant := range route {
 					if ant.ID == id && ant.CurrentRoom.Name != "" && !ant.Finished {
-						fmt.Print(" L", ant.ID, "-", ant.CurrentRoom.Name)
+						fmt.Print("L", ant.ID, "-", ant.CurrentRoom.Name, " ")
 					}
 				}
 			}
