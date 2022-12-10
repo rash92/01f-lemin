@@ -5,8 +5,11 @@ import (
 )
 
 type Ant struct {
-	ID         int
-	RouteIndex int
+	ID           int
+	RouteIndex   int
+	CurrentAnt   Room
+	CurrentIndex int
+	Route        []Room
 }
 
 func AssignAntsPerRoute(antSlice []Ant, allRoutes [][]Room) (antsPerRoute [][]Ant) {
@@ -35,7 +38,6 @@ func IdentifyAnts(numberOfAnts int, antsPerRoute []int, routes [][]Room) (antsli
 			}
 		}
 	}
-	// fmt.Println(antslice)
 	return antslice
 }
 

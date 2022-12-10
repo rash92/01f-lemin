@@ -12,25 +12,23 @@ type Room struct {
 	Name            string
 	Xcoord          int
 	Ycoord          int
-	CurrentAnt      Ant
-	LinksAsStrings  []string
 	LinksAsPointers []*Room
 }
 
 // takes as input a slice of rooms and a slice of string that has the room links and populates the LinksAsStrings field with the name of the room
-func RoomLinkerStrings(unlinkedRooms []Room, roomLinks [][]string) []Room {
-	for linkIndex := 0; linkIndex < len(roomLinks); linkIndex++ {
-		for roomIndex := 0; roomIndex < len(unlinkedRooms); roomIndex++ {
-			if unlinkedRooms[roomIndex].Name == roomLinks[linkIndex][0] {
-				unlinkedRooms[roomIndex].LinksAsStrings = append(unlinkedRooms[roomIndex].LinksAsStrings, roomLinks[linkIndex][1])
-			}
-			if unlinkedRooms[roomIndex].Name == roomLinks[linkIndex][1] {
-				unlinkedRooms[roomIndex].LinksAsStrings = append(unlinkedRooms[roomIndex].LinksAsStrings, roomLinks[linkIndex][0])
-			}
-		}
-	}
-	return unlinkedRooms
-}
+// func RoomLinkerStrings(unlinkedRooms []Room, roomLinks [][]string) []Room {
+// 	for linkIndex := 0; linkIndex < len(roomLinks); linkIndex++ {
+// 		for roomIndex := 0; roomIndex < len(unlinkedRooms); roomIndex++ {
+// 			if unlinkedRooms[roomIndex].Name == roomLinks[linkIndex][0] {
+// 				unlinkedRooms[roomIndex].LinksAsStrings = append(unlinkedRooms[roomIndex].LinksAsStrings, roomLinks[linkIndex][1])
+// 			}
+// 			if unlinkedRooms[roomIndex].Name == roomLinks[linkIndex][1] {
+// 				unlinkedRooms[roomIndex].LinksAsStrings = append(unlinkedRooms[roomIndex].LinksAsStrings, roomLinks[linkIndex][0])
+// 			}
+// 		}
+// 	}
+// 	return unlinkedRooms
+// }
 
 // takes as input a slice of rooms and a slice of string that has the room links and populates the LinksAsPointers field with a pointer to the room
 // roomLinks is a slice with elements of the form [room1, room2] showing room1 is linked to room 2.
@@ -119,7 +117,7 @@ func ParseArgs() (numberofants int, startingroom Room, endingroom Room, allrooms
 	}
 
 	allrooms = RoomLinkerPointers(allrooms, roomLinks)
-	allrooms = RoomLinkerStrings(allrooms, roomLinks)
+	// allrooms = RoomLinkerStrings(allrooms, roomLinks)
 
 	// fixes current and ending room to fill in links
 	for _, currentRoom := range allrooms {

@@ -29,10 +29,6 @@ func main() {
 			fmt.Println("room ", j, " in route: ", room.Name)
 		}
 	}
-	// getAntsOnRoute := AntHandler(allroutes, numberofants)
-	// fmt.Println(getAntsOnRoute)
-	// fmt.Println(allroutes)
-
 	// i := 1
 
 	// for i < numberofants+1 {
@@ -46,13 +42,20 @@ func main() {
 	// 	i++
 	// }
 
-	// antsRoute := RoutesAntsWillTake(allroutes, numberofants)
+	antsRoute := RoutesAntsWillTake(allroutes, numberofants)
 	// fmt.Println("ants route:", antsRoute)
 
 	// roomsInRoute := []int{}
 	// lengthOfRoutes := len(allroutes)
 
-	fmt.Println(allRooms)
+	// fmt.Println(allRooms)
+	antslice := lemin.IdentifyAnts(numberofants, antsRoute, allroutes)
+	antsperroute := lemin.AssignAntsPerRoute(antslice, allroutes)
+	// fmt.Println(antsperroute)
+
+	for i := 0; i < len(antsperroute); i++ {
+		fmt.Println(i, antsperroute[i])
+	}
 
 }
 
