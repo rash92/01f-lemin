@@ -91,4 +91,12 @@ func RoutesAntsWillTake(routes [][]lemin.Room, numberofants int) []int {
 		}
 	}
 	return antsOnRoute
+	fmt.Println("length of empty set of rooms is: ", len([]lemin.Room{}))
+	fmt.Println("number of paths is: ", len(allroutes), "number of ants is: ", numberofants)
+	fmt.Println("ant paths: ", lemin.AssignNumberOfAnts(allroutes, numberofants))
+	// lemin.AntHandler(allroutes, numberofants)
+	antSlice := lemin.IdentifyAnts(numberofants, lemin.AssignNumberOfAnts(allroutes, numberofants), allroutes)
+	fmt.Println("antSlice is: ", antSlice)
+	fmt.Println(lemin.AssignAntsPerRoute(antSlice, allroutes))
+	// lemin.PrintAnts(lemin.IdentifyAnts(numberofants, lemin.AssignAnts(allroutes, numberofants), allroutes), allroutes, numberofants)
 }

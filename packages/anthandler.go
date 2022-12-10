@@ -9,6 +9,21 @@ type Ant struct {
 	RouteIndex int
 }
 
+func AssignAntsPerRoute(antSlice []Ant, allRoutes [][]Room) (antsPerRoute [][]Ant) {
+	numberOfRoutes := len(allRoutes)
+	for routeIndex := 0; routeIndex < numberOfRoutes; routeIndex++ {
+		antsForCurrentRoute := []Ant{}
+		for _, ant := range antSlice {
+			if ant.RouteIndex == routeIndex {
+				antsForCurrentRoute = append(antsForCurrentRoute, ant)
+			}
+		}
+		antsPerRoute = append(antsPerRoute, antsForCurrentRoute)
+	}
+
+	return antsPerRoute
+}
+
 func IdentifyAnts(numberOfAnts int, antsPerRoute []int, routes [][]Room) (antslice []Ant) {
 	antNumber := 0
 	for antNumber < numberOfAnts {
@@ -24,7 +39,7 @@ func IdentifyAnts(numberOfAnts int, antsPerRoute []int, routes [][]Room) (antsli
 	return antslice
 }
 
-func AssignAnts(routes [][]Room, numberofants int) (antsPerRoute []int) {
+func AssignNumberOfAnts(routes [][]Room, numberofants int) (antsPerRoute []int) {
 	if len(routes) == 1 {
 		return []int{numberofants}
 	}
@@ -91,16 +106,24 @@ func AreAntsFinished(antsPerRoute []int) bool {
 	return true
 }
 
-func PrintAnts(allAnts []Ant, routes [][]Room, numberOfAnts int) {
-	antsRemaining := numberOfAnts
-	for _, ant := range allAnts {
-		for timeStep := 0; antsRemaining > 0; timeStep++ {
-			for room := 1; room < len(routes[ant.RouteIndex]); room++ {
+func FindMaxTimeSteps(antsPerRoute [][]Ant, allRoutes [][]Room) int {
+	currentMax := 0
+	for routeIndex, ants := range antsPerRoute {
+		potentialMax := len(ants) + len(allRoutes[routeIndex])
+		if potentialMax > currentMax {
+			currentMax = potentialMax
+		}
+	}
+	return currentMax
+}
 
-				fmt.Println("L", ant.ID, "- ", routes[ant.RouteIndex][room].Name)
-				numberOfAnts--
+func PrintAnts(antsPerRoute [][]Ant, allRoutes [][]Room) {
+	numberOfTimeSteps := FindMaxTimeSteps(antsPerRoute, allRoutes)
+	for timestep := 0; timestep < numberOfTimeSteps; timestep++ {
+		for routeIndex := 0; routeIndex < len(antsPerRoute); routeIndex++ {
+			for roomIndex := 0; roomIndex < len(allRoutes[routeIndex]); roomIndex++ {
+				fmt.Print(antsPerRoute[routeIndex])
 			}
 		}
-		fmt.Println()
 	}
 }
