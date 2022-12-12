@@ -18,16 +18,16 @@ func main() {
 	}
 
 	routes := [][]lemin.Room{}
-	allroutes := lemin.FindAllRoutes(startingRoom, endingRoom, allRooms, routes)
+	allroutes := lemin.FindAllRoutes(startingRoom, endingRoom, allRooms, routes, numberofants)
 
 	if len(allroutes) <= 0 {
 		fmt.Println("ERROR: invalid data format, no route found")
 		return
 	}
 
-	antSlice := lemin.IdentifyAnts(numberofants, lemin.AssignNumberOfAnts(allroutes, numberofants), allroutes)
+	// antSlice := lemin.IdentifyAnts(numberofants, lemin.AssignNumberOfAnts(allroutes, numberofants), allroutes)
 
-	antsPerRoute := lemin.AssignAntsPerRoute(antSlice, allroutes)
+	antsPerRoute := lemin.AssignAntsPerRoute(numberofants, allroutes)
 
 	fmt.Println(numberofants)
 	fmt.Println(instruction)

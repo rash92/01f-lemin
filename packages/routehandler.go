@@ -1,6 +1,8 @@
 package lemin
 
 import (
+	"errors"
+	"fmt"
 	"reflect"
 )
 
@@ -46,8 +48,43 @@ func RemoveIncomplete(existingRoutes [][]Room, endingRoom Room) (outputRoutes []
 	return outputRoutes
 }
 
-// takes a list of routes and returns a list of routes with routes that go through the same middle rooms removed, preferring to keep the shortest route
-func RemoveDuplicates(existingRoutes [][]Room) [][]Room {
+func FindLengthOfRouteForAnts(setOfRoutes [][]Room, numberOfAnts int) int {
+	routeLength := 0
+
+	antsForRoute1 := AssignAntsPerRoute(numberOfAnts, setOfRoutes)
+
+	for routeIndex, route := range setOfRoutes {
+		potentialLength := len(route) + len(antsForRoute1[routeIndex])
+		if potentialLength > routeIndex {
+			routeLength = potentialLength
+		}
+	}
+	return routeLength
+}
+
+func IsSetOfRoutesShorter(routes1 [][]Room, routes2 [][]Room, numberOfAnts int) bool {
+	return FindLengthOfRouteForAnts(routes1, numberOfAnts) < FindLengthOfRouteForAnts(routes2, numberOfAnts)
+}
+
+// takes a list of routes and returns a checks if any go through the same middle rooms, true if they don't
+func IsSetOfRoutesIndependent(existingRoutes [][]Room) bool {
+	for route1Index := 0; route1Index < len(existingRoutes); route1Index++ {
+		route1 := existingRoutes[route1Index]
+		for route2Index := 0; route2Index < len(existingRoutes); route2Index++ {
+			route2 := existingRoutes[route2Index]
+			for roomIndex := 1; roomIndex < len(route1)-1; roomIndex++ {
+				room := route1[roomIndex]
+				if IsRoomContainedInRoute(room, route2) && route2Index != route1Index {
+					return false
+				}
+			}
+		}
+	}
+
+	return true
+}
+
+func FindInitialValidSetOfPaths(existingRoutes [][]Room) [][]Room {
 	for route1Index := 0; route1Index < len(existingRoutes); route1Index++ {
 		route1 := existingRoutes[route1Index]
 		for route2Index := 0; route2Index < len(existingRoutes); route2Index++ {
@@ -66,6 +103,48 @@ func RemoveDuplicates(existingRoutes [][]Room) [][]Room {
 		}
 	}
 	return existingRoutes
+}
+
+func RemoveDuplicates(allRoutesIncludingDuplicates [][]Room, numberOfAnts int, currentBestNumberOfSteps int) (bestSetOfRoutes [][]Room, shortestLength int, noValidPathsError error) {
+	RunningBestSetOfRoutes := [][]Room{}
+	// fmt.Println("current length of attempted set of routes is: ", len(allRoutesIncludingDuplicates))
+	// start with longest possible times all ants going down single route
+	shortestLength = currentBestNumberOfSteps
+
+	if IsSetOfRoutesIndependent(allRoutesIncludingDuplicates) && FindLengthOfRouteForAnts(allRoutesIncludingDuplicates, numberOfAnts) <= currentBestNumberOfSteps {
+		fmt.Println("is current attempted set valid")
+		return allRoutesIncludingDuplicates, shortestLength, nil
+	}
+
+	for routeIndex := 0; routeIndex < len(allRoutesIncludingDuplicates); routeIndex++ {
+		potentialSetOfRoutes := append(allRoutesIncludingDuplicates[:routeIndex], allRoutesIncludingDuplicates[routeIndex+1:]...)
+		fmt.Println("potential set of routes has length: ", len(potentialSetOfRoutes), "current routeIndex is: ", routeIndex, "current shortest length is: ", shortestLength)
+		if IsSetOfRoutesIndependent(potentialSetOfRoutes) {
+			lengthOfCurrentSetOfRoutes := FindLengthOfRouteForAnts(potentialSetOfRoutes, numberOfAnts)
+			if lengthOfCurrentSetOfRoutes < shortestLength {
+				shortestLength = lengthOfCurrentSetOfRoutes
+				RunningBestSetOfRoutes = potentialSetOfRoutes
+				// fmt.Println("current length of running best set of routes is before the else: ", len(RunningBestSetOfRoutes))
+			}
+		} else {
+			potentialSetOfRoutes, _, err := RemoveDuplicates(potentialSetOfRoutes, numberOfAnts, shortestLength)
+			if err == nil {
+				if IsSetOfRoutesIndependent(potentialSetOfRoutes) {
+					lengthOfCurrentSetOfRoutes := FindLengthOfRouteForAnts(potentialSetOfRoutes, numberOfAnts)
+					if lengthOfCurrentSetOfRoutes < shortestLength {
+						shortestLength = lengthOfCurrentSetOfRoutes
+						RunningBestSetOfRoutes = potentialSetOfRoutes
+						// fmt.Println("current length of running best set of routes is after the else: ", len(RunningBestSetOfRoutes))
+					}
+				}
+			}
+		}
+	}
+	// fmt.Println("current length of running best set of routes is: ", len(RunningBestSetOfRoutes))
+	if len(RunningBestSetOfRoutes) == 0 {
+		return RunningBestSetOfRoutes, shortestLength, errors.New("no valid paths")
+	}
+	return RunningBestSetOfRoutes, shortestLength, nil
 }
 
 // finds a route that hasn't already been found and put in existingRoutes if possible, or returns an empty route
@@ -106,8 +185,10 @@ func FindRoute(startingRoom Room, endingRoom Room, allRooms []Room, existingRout
 }
 
 // finds all possible valid routes, and sorts them from shortest to longest
-func FindAllRoutes(startingRoom Room, endingRoom Room, allRooms []Room, existingRoutes [][]Room) (allRoutesNames [][]Room) {
+func FindAllRoutes(startingRoom Room, endingRoom Room, allRooms []Room, existingRoutes [][]Room, numberOfAnts int) (allRoutesNames [][]Room) {
 	FindRoute(startingRoom, endingRoom, allRooms, []Room{}, &existingRoutes)
 
-	return RouteSorter(RemoveDuplicates(RemoveIncomplete(existingRoutes, endingRoom)))
+	allRoutesNames, _, _ = RemoveDuplicates(RouteSorter(RemoveIncomplete(existingRoutes, endingRoom)), numberOfAnts, FindLengthOfRouteForAnts(FindInitialValidSetOfPaths(existingRoutes), numberOfAnts))
+
+	return allRoutesNames
 }
