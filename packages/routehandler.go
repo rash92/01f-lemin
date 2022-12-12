@@ -85,7 +85,7 @@ func IsSetOfRoutesIndependent(existingRoutes [][]Room) bool {
 
 func FindInitialValidSetOfPaths(existingRoutes [][]Room) [][]Room {
 	outputRoutes := RouteSorter(existingRoutes)
-	// outputRoutes := append(sortedRoutes[2:])
+	// outputRoutes = append(outputRoutes[2:])
 	for route1Index := 0; route1Index < len(outputRoutes); route1Index++ {
 		route1 := outputRoutes[route1Index]
 		for route2Index := 0; route2Index < len(outputRoutes); route2Index++ {
@@ -115,6 +115,7 @@ func RemoveDuplicates(allRoutesIncludingDuplicates [][]Room, numberOfAnts int) [
 	var outputGuess [][]Room
 	outputGuess = initialGuess
 	shortestLength := initialLength
+	allRoutesIncludingDuplicates = RouteSorter(allRoutesIncludingDuplicates)
 
 	fmt.Println("initial guess, length, outputguess are: ", len(initialGuess), initialLength, len(outputGuess))
 
@@ -124,8 +125,9 @@ func RemoveDuplicates(allRoutesIncludingDuplicates [][]Room, numberOfAnts int) [
 	}
 
 	for routeIndex := 0; routeIndex < len(allRoutesIncludingDuplicates); routeIndex++ {
-		potentialSetOfRoutes := append(allRoutesIncludingDuplicates[routeIndex+1:])
+		potentialSetOfRoutes := append(allRoutesIncludingDuplicates[routeIndex:])
 		fmt.Println("potential set of routes has length: ", len(potentialSetOfRoutes), "current routeIndex is: ", routeIndex, "current shortest length is: ", shortestLength)
+		// fmt.Println("potential set of routes has first element: ", potentialSetOfRoutes[0])
 		if IsSetOfRoutesIndependent(potentialSetOfRoutes) {
 			lengthOfCurrentSetOfRoutes := FindLengthOfRouteForAnts(potentialSetOfRoutes, numberOfAnts)
 			if lengthOfCurrentSetOfRoutes < shortestLength {
