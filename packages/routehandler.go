@@ -1,7 +1,6 @@
 package lemin
 
 import (
-	"fmt"
 	"reflect"
 )
 
@@ -106,7 +105,7 @@ func FindInitialValidSetOfPaths(existingRoutes [][]Room) [][]Room {
 	return outputRoutes
 }
 
-func RemoveDuplicates(allRoutesIncludingDuplicates [][]Room, numberOfAnts int) [][]Room {
+func FindShortestValidSetOfPaths(allRoutesIncludingDuplicates [][]Room, numberOfAnts int) [][]Room {
 	// fmt.Println("current length of attempted set of routes is: ", len(allRoutesIncludingDuplicates))
 	// start with longest possible times all ants going down single route
 
@@ -117,31 +116,31 @@ func RemoveDuplicates(allRoutesIncludingDuplicates [][]Room, numberOfAnts int) [
 	shortestLength := initialLength
 	allRoutesIncludingDuplicates = RouteSorter(allRoutesIncludingDuplicates)
 
-	fmt.Println("initial guess, length, outputguess are: ", len(initialGuess), initialLength, len(outputGuess))
+	// fmt.Println("initial guess, length, outputguess are: ", len(initialGuess), initialLength, len(outputGuess))
 
 	if IsSetOfRoutesIndependent(allRoutesIncludingDuplicates) && FindLengthOfRouteForAnts(allRoutesIncludingDuplicates, numberOfAnts) < initialLength {
-		fmt.Println("is current attempted set valid")
+		// fmt.Println("is current attempted set valid")
 		return allRoutesIncludingDuplicates
 	}
 
 	for routeIndex := 0; routeIndex < len(allRoutesIncludingDuplicates); routeIndex++ {
-		potentialSetOfRoutes := append(allRoutesIncludingDuplicates[routeIndex:])
-		fmt.Println("potential set of routes has length: ", len(potentialSetOfRoutes), "current routeIndex is: ", routeIndex, "current shortest length is: ", shortestLength)
+		potentialSetOfRoutes := allRoutesIncludingDuplicates[routeIndex:]
+		// fmt.Println("potential set of routes has length: ", len(potentialSetOfRoutes), "current routeIndex is: ", routeIndex, "current shortest length is: ", shortestLength)
 		// fmt.Println("potential set of routes has first element: ", potentialSetOfRoutes[0])
 		if IsSetOfRoutesIndependent(potentialSetOfRoutes) {
 			lengthOfCurrentSetOfRoutes := FindLengthOfRouteForAnts(potentialSetOfRoutes, numberOfAnts)
 			if lengthOfCurrentSetOfRoutes < shortestLength {
 				shortestLength = lengthOfCurrentSetOfRoutes
-				fmt.Println("here before copy")
+				// fmt.Println("here before copy")
 				outputGuess = potentialSetOfRoutes
 
 				// fmt.Println("current length of running best set of routes is before the else: ", len(RunningBestSetOfRoutes))
 			}
 		} else {
 			potentialSetOfRoutes := FindInitialValidSetOfPaths(potentialSetOfRoutes)
-			fmt.Println("potential set of routes has length: ", len(potentialSetOfRoutes), "current routeIndex is: ", routeIndex, "current shortest length is: ", shortestLength)
+			// fmt.Println("potential set of routes has length: ", len(potentialSetOfRoutes), "current routeIndex is: ", routeIndex, "current shortest length is: ", shortestLength)
 			lengthOfCurrentSetOfRoutes := FindLengthOfRouteForAnts(potentialSetOfRoutes, numberOfAnts)
-			fmt.Println("inside the else - length of current potential routes is: ", lengthOfCurrentSetOfRoutes)
+			// fmt.Println("inside the else - length of current potential routes is: ", lengthOfCurrentSetOfRoutes)
 			if lengthOfCurrentSetOfRoutes < shortestLength {
 				shortestLength = lengthOfCurrentSetOfRoutes
 
@@ -151,7 +150,7 @@ func RemoveDuplicates(allRoutesIncludingDuplicates [][]Room, numberOfAnts int) [
 	}
 	// fmt.Println("current length of running best set of routes is: ", len(RunningBestSetOfRoutes))
 	if len(outputGuess) == 0 {
-		fmt.Println("here")
+		// fmt.Println("here")
 		return [][]Room{}
 	}
 	return outputGuess
@@ -198,7 +197,9 @@ func FindRoute(startingRoom Room, endingRoom Room, allRooms []Room, existingRout
 func FindAllRoutes(startingRoom Room, endingRoom Room, allRooms []Room, existingRoutes [][]Room, numberOfAnts int) (allRoutesNames [][]Room) {
 	FindRoute(startingRoom, endingRoom, allRooms, []Room{}, &existingRoutes)
 
-	allRoutesNames = RemoveDuplicates((RemoveIncomplete(existingRoutes, endingRoom)), numberOfAnts)
+	allValidRoutes := RemoveIncomplete(existingRoutes, endingRoom)
+
+	allRoutesNames = FindShortestValidSetOfPaths(allValidRoutes, numberOfAnts)
 
 	return allRoutesNames
 }
